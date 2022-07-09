@@ -1,8 +1,10 @@
 import random, os, telebot, logging
 from config import TOKEN
 from telebot import types
+from requests_html import HTMLSession
 
-bot = telebot.TeleBot(token=TOKEN)
+bot = telebot.TeleBot(TOKEN)
+session = HTMLSession()
 
 
 @bot.message_handler(commands=['start', 'help'])
@@ -16,8 +18,9 @@ def welcome(message):
     item2 = types.KeyboardButton('Посмотреть милые видео')
     item3 = types.KeyboardButton('Прослушать твои любимые песни')
     item4 = types.KeyboardButton('Cекрет')
+    item5 = types.KeyboardButton('Рассказать анекдот')
 
-    markup.add(item1, item2, item3, item4)
+    markup.add(item1, item2, item3, item4, item5)
 
     bot.send_message(message.chat.id,
                      f'Дарова <b>{message.chat.first_name}</b>, я написал простенького бота специалльно для тебя',
@@ -45,6 +48,15 @@ def message_echo(mesage):
         sti = open('stickers/sticker1.webp', 'rb')
         bot.send_message(mesage.chat.id, 'Люблю тя <3')
         bot.send_sticker(mesage.chat.id, sti)
+    if mesage.text == 'Рассказать анекдот':
+        bot().send_message(mesage.chat.id, anekdot())
+
+
+def anekdot():
+    r = session.get('https://anekdotov.net/anekdot/')
+    aneks = r.html.find('.anekdot')
+    aneks = list(map(lambda x: x.text, aneks))
+    return random.choice(aneks)
 
 
 bot.infinity_polling()
