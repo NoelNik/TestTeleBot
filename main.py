@@ -49,7 +49,7 @@ def message_echo(mesage):
         bot.send_message(mesage.chat.id, 'Люблю тя <3')
         bot.send_sticker(mesage.chat.id, sti)
     if mesage.text == 'Рассказать анекдот':
-        bot().send_message(mesage.chat.id, anekdot())
+        bot.send_message(mesage.chat.id, anekdot())
 
 
 def anekdot():
